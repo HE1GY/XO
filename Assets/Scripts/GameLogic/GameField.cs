@@ -4,6 +4,7 @@ using AI;
 using UnityEngine;
 using Utilities.Events;
 
+
 namespace GameLogic
 {
     public class GameField : MonoBehaviour
@@ -13,7 +14,7 @@ namespace GameLogic
         private Mark[] _marks;
         
         private Mark _currentMark=Mark.X;
-        private Opponent _opponent;
+        private AIBrain _opponent;
 
 
         private void OnEnable()
@@ -22,6 +23,7 @@ namespace GameLogic
             {
                 xo.MarkChanged += OnUpdateGameField;
             }
+            EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,OnAiMove);
         }
 
         private void OnDisable()
@@ -30,23 +32,23 @@ namespace GameLogic
             {
                 xo.MarkChanged -= OnUpdateGameField;
             }
+            EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,OnAiMove);
         }
 
         private void Start()
         {
             _marks = new Mark[9];
-            _opponent = new Opponent(Mark.O);
+            _opponent = new AIBrain();
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                int AiChooseCell = _opponent.MakeAMove(_marks);
-                var freePlace= _xoGrid[AiChooseCell];
-                freePlace.SetMark(_opponent.AIMark);
+                OnAiMove();
             }
         }
+
 
         private void OnUpdateGameField()
         {
@@ -101,5 +103,14 @@ namespace GameLogic
                 _currentMark = Mark.X;
             }
         }
+
+        private void OnAiMove()
+        {
+            int aiChoice = _opponent.GetAiMoveIndex(_marks);
+            Debug.Log(aiChoice);
+            _xoGrid[aiChoice].SetMark(Mark.O);
+            OnUpdateGameField();
+        }
+        
     }
 }

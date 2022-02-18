@@ -32,16 +32,16 @@ namespace Spawn
         private void Spawn()
         {
             Item item;
-            if (_xSpawn)
-            {
+            /*if (_xSpawn)
+            {*/
                 item = _poolX.GetItem();
-                _xSpawn = false;
+                /*_xSpawn = false;
             }
             else
             {
                 item = _poolO.GetItem();
                 _xSpawn = true;
-            }
+            }*/
 
             Transform transform1;
             (transform1 = item.transform).SetParent(_placeToSpawn);
@@ -51,7 +51,7 @@ namespace Spawn
         private void OnRestart()
         {
             _poolX.ResetPool();
-            _poolO.ResetPool();
+            /*_poolO.ResetPool();*/
             _xSpawn = true;
             Spawn();
         }
