@@ -5,7 +5,7 @@ using Utilities.Events;
 
 
 [RequireComponent(typeof(Animator))]
-public class PopUpWindow : MonoBehaviour
+public class InfoWindow : MonoBehaviour
 {
     [SerializeField] private Text _winnerText;
 

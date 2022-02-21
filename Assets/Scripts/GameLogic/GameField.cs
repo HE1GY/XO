@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using AI;
+using DefaultNamespace;
 using UnityEngine;
 using Utilities.Events;
 
@@ -13,22 +15,19 @@ namespace GameLogic
         private Mark[] _marks;
         private Mark _currentMark=Mark.X;
         private AIBrain _opponent;
-        private bool _2PlayerPlaying;
-
         private Mark _aiMark;
+        private GameSetup _gameSetup;
 
 
         private void OnEnable()
         {
+            EventsControllerXo.AddListener(EventsTypeXo.ReStart,OnRestart);
             foreach (var xo in _xoGrid)
             {
                 xo.MarkChanged += OnUpdateGameField;
             }
             EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,AiMove);
-            EventsControllerXo.AddListener<bool>(EventsTypeXo.SelectMode,OnSelectMode);
-            EventsControllerXo.AddListener(EventsTypeXo.ReStart,OnRestart);
-            
-            EventsControllerXo.AddListener<bool>(EventsTypeXo.SelectMark,OnSelectedMark);
+            EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
         }
 
         private void OnDisable()
@@ -38,10 +37,10 @@ namespace GameLogic
                 xo.MarkChanged -= OnUpdateGameField;
             }
             EventsControllerXo.RemoveListener(EventsTypeXo.SpawnItem,AiMove);
-            EventsControllerXo.RemoveListener<bool>(EventsTypeXo.SelectMode,OnSelectMode);
             EventsControllerXo.RemoveListener(EventsTypeXo.ReStart,OnRestart);
-            
-            EventsControllerXo.RemoveListener<bool>(EventsTypeXo.SelectMark,OnSelectedMark);
+
+            EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
+
         }
 
         private void Start()
@@ -49,6 +48,7 @@ namespace GameLogic
             _marks = new Mark[9];
             _opponent = new AIBrain();
         }
+        
 
         private void OnUpdateGameField()
         {
@@ -101,37 +101,38 @@ namespace GameLogic
 
         private void AiMove()
         {
-            if (!_2PlayerPlaying)
+            if (!_gameSetup.IsTwoPlayer)
             {
+                CopyPlaceHoldersMarksToMarksArray();
                 int aiChoice = _opponent.GetAiMoveIndex(_marks,_aiMark);
                 print(aiChoice);
                 _xoGrid[aiChoice].SetMark(_aiMark);
             }
         }
-
-        private void OnSelectMode(bool playersPlaying) => _2PlayerPlaying = playersPlaying;
+        
         private void OnRestart()
         {
             OnUpdateGameField();
             _currentMark = Mark.X;
-            if (_aiMark == Mark.X && !_2PlayerPlaying)
+            if (_aiMark == _currentMark)
             {
                 AiMove();
             }
+            
         }
-
-        private void OnSelectedMark(bool isXSelected)
+        
+        private void SetGameSetup(GameSetup gameSetup)
         {
-            if (isXSelected)
-            {
-                _aiMark = Mark.O;
-            }
-            else
+            _gameSetup = gameSetup;
+            if (!_gameSetup.IsTwoPlayer&&_gameSetup.PlayerMark==Mark.O)
             {
                 _aiMark = Mark.X;
                 AiMove();
             }
+            else
+            {
+                _aiMark = Mark.O;
+            }
         }
-        
     }
 }

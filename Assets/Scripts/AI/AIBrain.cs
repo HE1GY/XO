@@ -19,11 +19,11 @@ namespace AI
 
         private int MinMax(Mark[] marks,Mark playerMark,int layer)
         {
-            if (CheckWin(marks,Mark.O))
+            if (CheckWin(marks,_currentMark))
             {
                 return 10 + layer;
             }
-            if (CheckWin(marks,Mark.X))
+            if (CheckWin(marks,GetOppositeMark(_currentMark)))
             {
                 return -10 - layer;
             }

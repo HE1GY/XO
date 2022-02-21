@@ -83,28 +83,34 @@ namespace Utilities.Events
         public static void Broadcast(EventsTypeXo eventName)
         {
             if (CallCondition(eventName))
+            {
                 foreach (var item in events[eventName])
                 {
                     ((Action)item)();
                 }
+            }
         }
 
         public static void Broadcast<T>(EventsTypeXo eventName, T param)
         {
             if (CallCondition(eventName))
+            {
                 foreach (var item in events[eventName])
                 {
                     ((Action<T>)item)(param);
                 }
+            }
         }
 
         public static void Broadcast<T, TU>(EventsTypeXo eventName, T param, TU param2)
         {
             if (CallCondition(eventName))
+            {
                 foreach (var item in events[eventName])
                 {
                     ((Action<T,TU>)item)(param,param2);
                 }
+            }
         }
 
         private static bool CallCondition(EventsTypeXo eventName)

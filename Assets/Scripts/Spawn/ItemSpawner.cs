@@ -1,4 +1,5 @@
 using System;
+using DefaultNamespace;
 using GameLogic;
 using UnityEngine;
 using Utilities.Events;
@@ -11,34 +12,30 @@ namespace Spawn
         [SerializeField] private ItemPool _poolO;
         [SerializeField] private Transform _placeToSpawn;
 
-        private bool _xSpawn = true;
-        private bool _isXstartMark=true;
-        private bool _2PlayerPlaying;
-        
+        private bool _xSpawn;
+        private GameSetup _gameSetup;
+
 
         private void OnEnable()
         {
-            EventsControllerXo.AddListener<bool>(EventsTypeXo.SelectMode,OnSelectMode);
             EventsControllerXo.AddListener(EventsTypeXo.SpawnItem, Spawn);
+            EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
             EventsControllerXo.AddListener(EventsTypeXo.ReStart, OnRestart);
-            EventsControllerXo.AddListener<bool>(EventsTypeXo.SelectMark,OnSelectedMark);
         }
 
         private void OnDisable()
         {
-            EventsControllerXo.RemoveListener<bool>(EventsTypeXo.SelectMode,OnSelectMode);
             EventsControllerXo.RemoveListener(EventsTypeXo.SpawnItem, Spawn);
             EventsControllerXo.RemoveListener(EventsTypeXo.ReStart, OnRestart);
-            EventsControllerXo.RemoveListener<bool>(EventsTypeXo.SelectMark,OnSelectedMark);
+            
+            EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
         }
         
-
-
         private void Spawn()
         {
             Item item;
 
-            if (_2PlayerPlaying)
+            if (_gameSetup.IsTwoPlayer)
             {
                 item = PlayersSpawn();
             }
@@ -80,34 +77,18 @@ namespace Spawn
             }
         }
         
-        private void OnSelectMode(bool playersPlaying)
-        {
-            _2PlayerPlaying = playersPlaying;
-            if (_2PlayerPlaying)
-            {
-                Spawn();
-            }
-        }
-
         private void OnRestart()
         {
             _poolX.ResetPool();
             _poolO.ResetPool();
-            _xSpawn = _isXstartMark;
+            _xSpawn = (_gameSetup.PlayerMark == Mark.X);
             Spawn();
         }
 
-        private void OnSelectedMark(bool isXSelected)
+        private void SetGameSetup(GameSetup gameSetup)
         {
-            _xSpawn = isXSelected;
-            if (isXSelected)
-            {
-                _isXstartMark = true;
-            }
-            else
-            {
-                _isXstartMark = false;
-            }
+            _gameSetup = gameSetup;
+            _xSpawn = _gameSetup.PlayerMark == Mark.X;
             Spawn();
         }
     }
