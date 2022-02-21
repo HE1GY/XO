@@ -6,5 +6,7 @@
         Win,
         Draw,
         ReStart,
+        SelectMode,
+        SelectMark,
     }
 }

@@ -42,9 +42,12 @@ namespace GameLogic
 
         public void SetMark(Mark mark)
         {
-            Mark = mark;
-            SetNewPicture();
-            MarkChanged?.Invoke();
+            if (!_droppablePlace.HasImage)
+            {
+                Mark = mark;
+                SetNewPicture();
+                MarkChanged?.Invoke();
+            }
         }
 
         private void SetNewPicture()
@@ -52,14 +55,17 @@ namespace GameLogic
             if (Mark == Mark.O)
             {
                 _image.sprite = _oSprite;
+                _droppablePlace.HasImage = true;
             }
             else if (Mark == Mark.X)
             {
                 _image.sprite = _xSprite;
+                _droppablePlace.HasImage = true;
             }
             else
             {
                 _image.sprite = null;
+                _droppablePlace.HasImage = false;
             }
         }
 

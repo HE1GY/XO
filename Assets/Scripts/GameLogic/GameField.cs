@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using AI;
 using UnityEngine;
@@ -12,9 +11,11 @@ namespace GameLogic
         [SerializeField] private PlaceHolder[] _xoGrid;
 
         private Mark[] _marks;
-        
         private Mark _currentMark=Mark.X;
         private AIBrain _opponent;
+        private bool _2PlayerPlaying;
+
+        private Mark _aiMark;
 
 
         private void OnEnable()
@@ -23,7 +24,11 @@ namespace GameLogic
             {
                 xo.MarkChanged += OnUpdateGameField;
             }
-            EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,OnAiMove);
+            EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,AiMove);
+            EventsControllerXo.AddListener<bool>(EventsTypeXo.SelectMode,OnSelectMode);
+            EventsControllerXo.AddListener(EventsTypeXo.ReStart,OnRestart);
+            
+            EventsControllerXo.AddListener<bool>(EventsTypeXo.SelectMark,OnSelectedMark);
         }
 
         private void OnDisable()
@@ -32,7 +37,11 @@ namespace GameLogic
             {
                 xo.MarkChanged -= OnUpdateGameField;
             }
-            EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,OnAiMove);
+            EventsControllerXo.RemoveListener(EventsTypeXo.SpawnItem,AiMove);
+            EventsControllerXo.RemoveListener<bool>(EventsTypeXo.SelectMode,OnSelectMode);
+            EventsControllerXo.RemoveListener(EventsTypeXo.ReStart,OnRestart);
+            
+            EventsControllerXo.RemoveListener<bool>(EventsTypeXo.SelectMark,OnSelectedMark);
         }
 
         private void Start()
@@ -40,15 +49,6 @@ namespace GameLogic
             _marks = new Mark[9];
             _opponent = new AIBrain();
         }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                OnAiMove();
-            }
-        }
-
 
         private void OnUpdateGameField()
         {
@@ -62,7 +62,6 @@ namespace GameLogic
             {
                 EventsControllerXo.Broadcast<Mark>(EventsTypeXo.Draw, Mark.None);
             }
-            
             ChangeCurrentMover();
         }
 
@@ -90,11 +89,7 @@ namespace GameLogic
 
         private void ChangeCurrentMover()
         {
-            if (_currentMark == Mark.None)
-            {
-                _currentMark = Mark.X;
-            }
-            else if (_currentMark == Mark.X)
+            if (_currentMark == Mark.X)
             {
                 _currentMark = Mark.O;
             }
@@ -104,12 +99,38 @@ namespace GameLogic
             }
         }
 
-        private void OnAiMove()
+        private void AiMove()
         {
-            int aiChoice = _opponent.GetAiMoveIndex(_marks);
-            Debug.Log(aiChoice);
-            _xoGrid[aiChoice].SetMark(Mark.O);
+            if (!_2PlayerPlaying)
+            {
+                int aiChoice = _opponent.GetAiMoveIndex(_marks,_aiMark);
+                print(aiChoice);
+                _xoGrid[aiChoice].SetMark(_aiMark);
+            }
+        }
+
+        private void OnSelectMode(bool playersPlaying) => _2PlayerPlaying = playersPlaying;
+        private void OnRestart()
+        {
             OnUpdateGameField();
+            _currentMark = Mark.X;
+            if (_aiMark == Mark.X && !_2PlayerPlaying)
+            {
+                AiMove();
+            }
+        }
+
+        private void OnSelectedMark(bool isXSelected)
+        {
+            if (isXSelected)
+            {
+                _aiMark = Mark.O;
+            }
+            else
+            {
+                _aiMark = Mark.X;
+                AiMove();
+            }
         }
         
     }

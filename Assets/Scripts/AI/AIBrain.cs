@@ -10,10 +10,11 @@ namespace AI
 {
     public class AIBrain
     {
-        
-        public int GetAiMoveIndex(Mark[] marks)
+        private Mark _currentMark;
+        public int GetAiMoveIndex(Mark[] marks,Mark aiMark)
         {
-            return MinMax(marks,Mark.O,0);
+            _currentMark = aiMark;
+            return MinMax(marks,aiMark,0);
         }
 
         private int MinMax(Mark[] marks,Mark playerMark,int layer)
@@ -32,7 +33,7 @@ namespace AI
                 return 0;
             }
 
-            if (playerMark == Mark.O)//Max
+            if (playerMark == _currentMark)
             {
                 int bestScore=Int32.MinValue;
                 int bestIndex = -1;
@@ -42,7 +43,7 @@ namespace AI
                     Mark[] copyMarks = marks.ToArray();
                     copyMarks[emptyCellIndexs[i]] = Mark.O;
 
-                    int branchScore = MinMax(copyMarks, Mark.X, layer - 1);
+                    int branchScore = MinMax(copyMarks, GetOppositeMark(playerMark), layer - 1);
 
                     if (branchScore > bestScore)
                     {
@@ -67,7 +68,7 @@ namespace AI
                     Mark[] copyMarks = marks.ToArray();
                     copyMarks[emptyCellIndexs[i]] = Mark.X;
 
-                    int branchScore = MinMax(copyMarks, Mark.O, layer - 1);
+                    int branchScore = MinMax(copyMarks, GetOppositeMark(playerMark), layer - 1);
 
                     if (branchScore < worseScore)
                     {
@@ -106,8 +107,19 @@ namespace AI
                     emptyCellIndex.Add(i);
                 }
             }
-
             return emptyCellIndex;
-        } 
+        }
+
+        private Mark GetOppositeMark(Mark currentMark)
+        {
+            if (currentMark==Mark.X)
+            {
+                return Mark.O;
+            }
+            else
+            {
+                return Mark.X;
+            }
+        }
     }
 }

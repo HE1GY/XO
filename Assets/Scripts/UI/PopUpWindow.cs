@@ -10,7 +10,7 @@ public class PopUpWindow : MonoBehaviour
     [SerializeField] private Text _winnerText;
 
     private Animator _animator;
-    private static readonly int ShownWindowValue = Animator.StringToHash("IsShown");
+    private static readonly int ShownWindowHashCode = Animator.StringToHash("IsShown");
 
     private void Awake()
     {
@@ -34,12 +34,12 @@ public class PopUpWindow : MonoBehaviour
 
     private void TurnOff()
     {
-        _animator.SetBool(ShownWindowValue, false);
+        _animator.SetBool(ShownWindowHashCode, false);
     }
 
     private void TurnOn(Mark winner)
     {
-        _animator.SetBool(ShownWindowValue, true);
+        _animator.SetBool(ShownWindowHashCode, true);
         SetWinner(winner);
     }
 
