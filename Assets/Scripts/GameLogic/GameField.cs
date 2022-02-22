@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using AI;
 using DefaultNamespace;
@@ -26,7 +27,6 @@ namespace GameLogic
             {
                 xo.MarkChanged += OnUpdateGameField;
             }
-            EventsControllerXo.AddListener(EventsTypeXo.SpawnItem,AiMove);
             EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
         }
 
@@ -36,7 +36,6 @@ namespace GameLogic
             {
                 xo.MarkChanged -= OnUpdateGameField;
             }
-            EventsControllerXo.RemoveListener(EventsTypeXo.SpawnItem,AiMove);
             EventsControllerXo.RemoveListener(EventsTypeXo.ReStart,OnRestart);
 
             EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
@@ -49,7 +48,6 @@ namespace GameLogic
             _opponent = new AIBrain();
         }
         
-
         private void OnUpdateGameField()
         {
             CopyPlaceHoldersMarksToMarksArray();
@@ -63,6 +61,10 @@ namespace GameLogic
                 EventsControllerXo.Broadcast<Mark>(EventsTypeXo.Draw, Mark.None);
             }
             ChangeCurrentMover();
+            if (_aiMark == _currentMark)
+            {
+                AiMove();
+            }
         }
 
         private bool CheckIfDraw()
@@ -105,20 +107,23 @@ namespace GameLogic
             {
                 CopyPlaceHoldersMarksToMarksArray();
                 int aiChoice = _opponent.GetAiMoveIndex(_marks,_aiMark);
-                print(aiChoice);
                 _xoGrid[aiChoice].SetMark(_aiMark);
             }
         }
         
         private void OnRestart()
         {
-            OnUpdateGameField();
             _currentMark = Mark.X;
+            StartCoroutine(AiMOveCoroutine());
+        }
+
+        private IEnumerator AiMOveCoroutine()
+        {
+            yield return null; // щоб це викональ після всіx Restart, хз як правильно
             if (_aiMark == _currentMark)
             {
                 AiMove();
             }
-            
         }
         
         private void SetGameSetup(GameSetup gameSetup)

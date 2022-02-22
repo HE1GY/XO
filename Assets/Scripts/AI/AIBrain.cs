@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using GameLogic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.PlayerLoop;
+
 
 namespace AI
 {
@@ -41,9 +41,9 @@ namespace AI
                 for (int i = 0; i < emptyCellIndexs.Count; i++)
                 {
                     Mark[] copyMarks = marks.ToArray();
-                    copyMarks[emptyCellIndexs[i]] = Mark.O;
+                    copyMarks[emptyCellIndexs[i]] = _currentMark;
 
-                    int branchScore = MinMax(copyMarks, GetOppositeMark(playerMark), layer - 1);
+                    int branchScore = MinMax(copyMarks, GetOppositeMark(_currentMark), layer - 1);
 
                     if (branchScore > bestScore)
                     {
@@ -66,7 +66,7 @@ namespace AI
                 for (int i = 0; i < emptyCellIndexs.Count; i++)
                 {
                     Mark[] copyMarks = marks.ToArray();
-                    copyMarks[emptyCellIndexs[i]] = Mark.X;
+                    copyMarks[emptyCellIndexs[i]] = GetOppositeMark(_currentMark);
 
                     int branchScore = MinMax(copyMarks, GetOppositeMark(playerMark), layer - 1);
 
