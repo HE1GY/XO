@@ -1,6 +1,4 @@
-﻿using System;
-using DefaultNamespace;
-using GameLogic;
+﻿using GameLogic;
 using Utilities.Events;
 
 namespace UI
@@ -8,15 +6,16 @@ namespace UI
     public class SelectMarkWindow : SelectWindow
     {
         private GameSetup _receivedGameSetup;
+
         private new void OnEnable()
         {
-            EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMode,OnSelectedMode);
+            EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMode, OnSelectedMode);
             base.OnEnable();
         }
 
         private void OnDisable()
         {
-            EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMode,OnSelectedMode);
+            EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMode, OnSelectedMode);
         }
 
 
@@ -45,7 +44,7 @@ namespace UI
                 EventsControllerXo.Broadcast<GameSetup>(EventsTypeXo.SelectMark, _receivedGameSetup);
             }
         }
-        
+
         private GameSetup GetGameSetup(Mark mark)
         {
             _receivedGameSetup.PlayerMark = mark;

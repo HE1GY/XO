@@ -9,8 +9,8 @@ namespace Drag_Drop
     public class DroppablePlace : MonoBehaviour, IDropHandler
     {
         public Action<Mark> ItemDrop;
-        public bool HasImage { get; set;}
-        
+        public bool HasImage { get; set; }
+
         public void OnDrop(PointerEventData eventData)
         {
             if (!HasImage)

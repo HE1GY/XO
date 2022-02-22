@@ -1,5 +1,3 @@
-using System;
-using DefaultNamespace;
 using GameLogic;
 using UnityEngine;
 using Utilities.Events;
@@ -19,7 +17,7 @@ namespace Spawn
         private void OnEnable()
         {
             EventsControllerXo.AddListener(EventsTypeXo.SpawnItem, Spawn);
-            EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
+            EventsControllerXo.AddListener<GameSetup>(EventsTypeXo.SelectMark, SetGameSetup);
             EventsControllerXo.AddListener(EventsTypeXo.ReStart, OnRestart);
         }
 
@@ -27,10 +25,10 @@ namespace Spawn
         {
             EventsControllerXo.RemoveListener(EventsTypeXo.SpawnItem, Spawn);
             EventsControllerXo.RemoveListener(EventsTypeXo.ReStart, OnRestart);
-            
-            EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMark,SetGameSetup);
+
+            EventsControllerXo.RemoveListener<GameSetup>(EventsTypeXo.SelectMark, SetGameSetup);
         }
-        
+
         private void Spawn()
         {
             Item item;
@@ -41,9 +39,9 @@ namespace Spawn
             }
             else
             {
-                item =PlayerSpawn();
+                item = PlayerSpawn();
             }
-            
+
             Transform transform1;
             (transform1 = item.transform).SetParent(_placeToSpawn);
             transform1.localPosition = Vector3.zero;
@@ -62,6 +60,7 @@ namespace Spawn
                 item = _poolO.GetItem();
                 _xSpawn = true;
             }
+
             return item;
         }
 
@@ -76,7 +75,7 @@ namespace Spawn
                 return _poolO.GetItem();
             }
         }
-        
+
         private void OnRestart()
         {
             _poolX.ResetPool();

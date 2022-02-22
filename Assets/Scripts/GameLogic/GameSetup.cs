@@ -1,6 +1,4 @@
-﻿using GameLogic;
-
-namespace DefaultNamespace
+﻿namespace GameLogic
 {
     public class GameSetup
     {
@@ -8,7 +6,7 @@ namespace DefaultNamespace
 
         public bool IsTwoPlayer { get; set; }
 
-        public GameSetup(bool isTwoPlayer, Mark playerMark=Mark.X)
+        public GameSetup(bool isTwoPlayer, Mark playerMark = Mark.X)
         {
             IsTwoPlayer = isTwoPlayer;
             PlayerMark = playerMark;

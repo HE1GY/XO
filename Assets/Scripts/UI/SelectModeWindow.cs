@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+﻿using GameLogic;
 using Utilities.Events;
 
 namespace UI
@@ -9,17 +9,19 @@ namespace UI
         {
             TurnOn();
         }
+
         protected override void OnFirstButtonClick()
         {
-            EventsControllerXo.Broadcast<GameSetup>(EventsTypeXo.SelectMode, GetGameSetup(isTwoPlayer:true));
+            EventsControllerXo.Broadcast<GameSetup>(EventsTypeXo.SelectMode, GetGameSetup(isTwoPlayer: true));
             TurnOff();
         }
 
         protected override void OnSecondButtonClick()
         {
-            EventsControllerXo.Broadcast<GameSetup>(EventsTypeXo.SelectMode, GetGameSetup(isTwoPlayer:false));
+            EventsControllerXo.Broadcast<GameSetup>(EventsTypeXo.SelectMode, GetGameSetup(isTwoPlayer: false));
             TurnOff();
         }
+
         private GameSetup GetGameSetup(bool isTwoPlayer)
         {
             return new GameSetup(isTwoPlayer);
